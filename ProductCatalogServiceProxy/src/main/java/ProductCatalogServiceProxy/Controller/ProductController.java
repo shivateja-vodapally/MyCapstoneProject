@@ -1,9 +1,15 @@
 package ProductCatalogServiceProxy.Controller;
 
 import ProductCatalogServiceProxy.DTO.ProductDTO;
+import ProductCatalogServiceProxy.Models.Category;
 import ProductCatalogServiceProxy.Models.Product;
 import ProductCatalogServiceProxy.Service.iProductService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -24,25 +30,54 @@ public class ProductController {
     @GetMapping("")
     public List<Product> getProducts()
     {
-        return null;
+        return productService.getProducts();
     }
 
     @GetMapping("{id}")
-    public Product getProduct(@PathVariable("id") Long productId)
+    public ResponseEntity<Product> getProduct(@PathVariable("id") Long productId)
     {
-        return productService.getProduct(productId);
+        try{
+            if (productId < 1)
+            {
+                throw new IllegalArgumentException("Product id "+productId+" is not found");
+            }
+            MultiValueMap<String,String> headers=new LinkedMultiValueMap<>();
+            headers.add("Function called by","Controller");
+            Product product=productService.getProduct(productId);
+            return new ResponseEntity<>(product, headers,HttpStatus.OK);
+        }
+        catch(Exception exception)
+        {
+            throw exception;
+        }
     }
 
     @PostMapping("")
     public Product createProduct(@RequestBody ProductDTO productDTO)
     {
-        return new Product();
+        Product product=getProduct(productDTO);
+        return productService.createProduct(product);
     }
 
-    @PatchMapping("")
-    public Product updateProduct(@RequestBody ProductDTO productDTO)
+    @PatchMapping("{id}")
+    public Product updateProduct(@PathVariable Long id,@RequestBody ProductDTO productDTO)
     {
-        return null;
+        Product product=getProduct(productDTO);
+        Product resultantProduct=productService.updateProduct(id,product);
+        return resultantProduct;
     }
 
+    public Product getProduct(ProductDTO productDTO)
+    {
+        Product product=new Product();
+        product.setTitle(productDTO.getTitle());
+        product.setDescription(productDTO.getDescription());
+        product.setPrice(productDTO.getPrice());
+        Category category=new Category();
+        category.setName(productDTO.getCategory());
+        product.setCategory(category);
+        product.setImageUrl(productDTO.getImage());
+        product.setId(productDTO.getId());
+        return product;
+    }
 }

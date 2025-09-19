@@ -1,5 +1,7 @@
 package ProductCatalogServiceProxy.Service;
 
+import ProductCatalogServiceProxy.Clients.FakeStore.DTO.FakeStoreProductDTO;
+import ProductCatalogServiceProxy.DTO.ProductDTO;
 import ProductCatalogServiceProxy.Models.Product;
 
 import java.util.List;
@@ -11,5 +13,5 @@ public interface iProductService {
 
     Product createProduct(Product product);
 
-    Product updateProduct(long id, Product product);
+    Product updateProduct(Long id, Product product);
 }
