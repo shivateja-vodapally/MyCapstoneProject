@@ -5,7 +5,7 @@ import ProductCatalogServiceProxy.Repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-@Service
+//@Service
 public class StorageProductService implements iProductService{
 
     private ProductRepository productRepository;

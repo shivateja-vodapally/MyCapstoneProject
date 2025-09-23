@@ -4,6 +4,8 @@ import ProductCatalogServiceProxy.Models.Product;
 import ProductCatalogServiceProxy.Service.iProductService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -11,17 +13,26 @@ import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class ProductControllerTest {
     @Autowired
     ProductController productController;
+
     @MockBean
     iProductService productService;
 
-    //Here we are just mocking the productservice to get any product based on any id and
+    //Hamcrest Maven Dependency added for this annotation.This is to verify whether the
+    //id that we gave as parameter in getProduct(id)(Product Controller) is correctly going to productService
+    //call i.e. Product product=productService.getProduct(productId);
+    //It is verify path variable with actual parameter going to that corresponding service layer parameter.
+    @Captor
+    private ArgumentCaptor<Long> idCaptor;
+    //Here we are mocking the productservice to get any/some product based on any id and
     //test whether am able to receive the product details in getProduct method
+    //since this is considered as external dependency hence mocking it.
+    //Autowired is used where we need to test the class but MockBean is to mock the external dependency
     @Test
     @DisplayName("Getting product successfully")
     public void Test_GetProduct_ReturnProduct()
@@ -41,10 +52,11 @@ class ProductControllerTest {
         //Here we are testing whether we are receiving the product with Title Iphone17 & price 10000
         assertEquals(10000,productResponseEntity.getBody().getPrice());
         assertEquals("Iphone17",productResponseEntity.getBody().getTitle());
+        verify(productService,times(1)).getProduct(1L);
     }
 
     //Now we will test the same method to show that exception will be caught if getProduct
-    //throws exception when searched by any id
+    //throws some exception when searched by any id meaning some issue encountered in external dependency
     @Test
     @DisplayName("Dependency Threw an exception")
     public void Test_getProduct_InternalDependencyThrowException()
@@ -53,6 +65,8 @@ class ProductControllerTest {
         when(productService.getProduct(any(Long.class))).thenThrow(new RuntimeException("Something went wrong"));
 
         //Act & Assert in one statement itself
+        //Junit implements functional interface Executable.It has a single abstract method (execute()).
+        //Hence we executed lamba expression to implement it.
         assertThrows(RuntimeException.class,()->productController.getProduct(1L));
     }
 
@@ -65,4 +79,18 @@ class ProductControllerTest {
         assertThrows(IllegalArgumentException.class,()->productController.getProduct(0L));
     }
 
+    @Test
+    @DisplayName("Verify product id in getProduct id")
+    public void Test_ProductControllerCallsProductServiceWithSameId()
+    {
+        //Arrange
+        Long id=2L;
+
+        //Act
+        productController.getProduct(2L);
+
+        //Assert
+        verify(productService).getProduct(idCaptor.capture());
+        assertEquals(id,idCaptor.getValue());
+    }
 }
