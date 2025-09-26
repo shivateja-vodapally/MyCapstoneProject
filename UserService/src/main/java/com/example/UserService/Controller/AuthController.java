@@ -3,12 +3,14 @@ package com.example.UserService.Controller;
 import com.example.UserService.DTO.LoginRequestDTO;
 import com.example.UserService.DTO.SignUpRequestDTO;
 import com.example.UserService.DTO.UserDTO;
+import com.example.UserService.DTO.ValidateRequestDTO;
 import com.example.UserService.Models.User;
 import com.example.UserService.Service.AuthService;
 import org.antlr.v4.runtime.misc.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.method.P;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +21,7 @@ public class AuthController {
     @Autowired
     private AuthService authService;
     //Signup request
-    @PostMapping("auth/signup")
+    @PostMapping("/auth/signup")
     public ResponseEntity<UserDTO> signUp(@RequestBody SignUpRequestDTO signUpRequestDTO)
     {
         User user=authService.signUp(signUpRequestDTO.getEmail(), signUpRequestDTO.getPassword());
@@ -27,7 +29,7 @@ public class AuthController {
         return new ResponseEntity<>(userDTO, HttpStatus.OK);
     }
 
-    @PostMapping("auth/login")
+    @PostMapping("/auth/login")
     public ResponseEntity<UserDTO> login(@RequestBody LoginRequestDTO loginRequestDTO)
     {
         try
@@ -38,6 +40,13 @@ public class AuthController {
         } catch (Exception e) {
             return new ResponseEntity<>(null,HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @PostMapping("/auth/validate")
+    public ResponseEntity<Boolean> validateToken(@RequestBody ValidateRequestDTO validateRequestDTO)
+    {
+        boolean isValid= authService.validateToken(validateRequestDTO.getToken(), validateRequestDTO.getUserId());
+        return new ResponseEntity<>(isValid,HttpStatus.OK);
     }
 
     private UserDTO getUserDTO(User user)
