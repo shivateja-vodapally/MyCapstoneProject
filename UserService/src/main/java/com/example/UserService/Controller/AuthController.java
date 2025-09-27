@@ -34,7 +34,7 @@ public class AuthController {
     {
         try
         {
-            Pair<User, MultiValueMap<String,String>> bodyWithHeaders =authService.login(loginRequestDTO.getEmail(),loginRequestDTO.getPassword());
+            Pair<User, MultiValueMap<String,String>> bodyWithHeaders =authService.login(loginRequestDTO .getEmail(),loginRequestDTO.getPassword());
             UserDTO userDTO=getUserDTO(bodyWithHeaders.a);
             return new ResponseEntity<>(userDTO, bodyWithHeaders.b,HttpStatus.OK);
         } catch (Exception e) {
