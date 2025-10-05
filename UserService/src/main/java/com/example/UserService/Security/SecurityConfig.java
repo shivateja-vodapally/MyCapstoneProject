@@ -78,8 +78,11 @@ public class SecurityConfig {
     @Order(2)
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http)
             throws Exception {
+        //We are allowing http:localhost:9000/users/userId url in this code and remaining
+        //all the paths should be authenticated via http://localhost:9000/login
         http
                 .authorizeHttpRequests((authorize) -> authorize
+                        .requestMatchers("/users/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 // Form login handles the redirect to the login page from the
@@ -91,7 +94,7 @@ public class SecurityConfig {
 
 //The below method can be used to login via localhost:9000.So we will write custom user details service
 //in Security-->service-->CustomUserDetailsService so that we can login through our existing
-//DB credentials which we have got thru sign up request in controller
+//DB credentials via signup url
 //    @Bean
 //    public UserDetailsService userDetailsService() {
 //        UserDetails userDetails = User.builder()

@@ -68,6 +68,11 @@ public class FakeStoreProductService implements iProductService {
         return resultantProduct;
     }
 
+    @Override
+    public Product getProductDetails(Long userId, Long productId) {
+        return null;
+    }
+
     //Converts FakeStoreProductDTO to product
     private Product getProduct(FakeStoreProductDTO fakeStoreProductDTO)
     {

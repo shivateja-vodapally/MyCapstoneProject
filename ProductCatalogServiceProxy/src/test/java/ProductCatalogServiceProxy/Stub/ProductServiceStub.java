@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-@Service
-public class ProductServiceStub implements iProductService {
+//@Service
+public class   ProductServiceStub implements iProductService {
     Map<Long,Product> products;
     public ProductServiceStub()
     {
@@ -34,5 +34,10 @@ public class ProductServiceStub implements iProductService {
     public Product updateProduct(Long id, Product product) {
         products.put(id,product);
         return products.get(id);
+    }
+
+    @Override
+    public Product getProductDetails(Long userId, Long productId) {
+        return null;
     }
 }

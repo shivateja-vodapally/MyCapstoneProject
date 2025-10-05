@@ -123,7 +123,7 @@ public class AuthService {
 
     //While validation, once you run the app first signup and then try to login then copy
     //the token from set_cookie,once the application stops and rerun, the secretkey will be
-    //generated newly so when you check with existing token signature won't be matched.
+    //generated newly so when you check with previous run token signature it won't be matched.
     public boolean validateToken(String token,long userId)
     {
         System.out.println(token);

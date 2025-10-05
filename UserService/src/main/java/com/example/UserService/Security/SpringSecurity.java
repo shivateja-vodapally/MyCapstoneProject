@@ -17,7 +17,7 @@ public class SpringSecurity {
      //Both cant be there at a time in spring version 3.5.6. But it worked for instructor with 3.2.3.
      //So do not go to previous version as it may lead to other dependency falures like lombok
      //Due to version incompatibility
-     //@Bean
+    //@Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception
     {
         httpSecurity.cors().disable();

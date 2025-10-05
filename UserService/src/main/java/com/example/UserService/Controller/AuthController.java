@@ -53,7 +53,7 @@ public class AuthController {
     {
         UserDTO userDTO=new UserDTO();
         userDTO.setEmail(user.getEmail());
-        userDTO.setRoles(user.getRoles());
+//        userDTO.setRoles(user.getRoles());
         return userDTO;
     }
 

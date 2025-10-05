@@ -5,8 +5,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Set;
 
-
+//This is the custom implementation of UserDetails. Most Important thing is do not return
+//roles from our user i.e. user.getRoles. It will issue access Denied exception in getAuthorities()
+//although it looks similar to our user method roles. just return new ArrayList then only
+//our customuserDetailsService works fine to login
 public class CustomUserDetails implements UserDetails {
 
     User user;
@@ -17,9 +21,6 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return new ArrayList<>();
-//        return user.getRoles().stream()
-//                .map(role -> new SimpleGrantedAuthority(role.getValue()))
-//                .collect(Collectors.toSet());
     }
 
     @Override

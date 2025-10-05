@@ -18,7 +18,7 @@ import java.util.List;
 //specific url for each method.
 //eg: Class - /Products  Class.method1 - /id ==> /Products/id
 
-@RequestMapping("/Products")
+@RequestMapping("/products")
 @RestController
 public class ProductController {
     iProductService productService;
@@ -50,6 +50,12 @@ public class ProductController {
         {
             throw exception;
         }
+    }
+
+    @GetMapping("/{uid}/{pid}")
+    public Product getProductDetails(@PathVariable Long uid, @PathVariable Long pid) {
+        System.out.println("Into the get product details");
+        return productService.getProductDetails(uid,pid);
     }
 
     @PostMapping("")
