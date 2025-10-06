@@ -1,8 +1,13 @@
 package com.example.UserService.Service;
 
+import com.example.UserService.Client.KafkaProducerClient;
+import com.example.UserService.DTO.SendEmailMessageDTO;
+import com.example.UserService.DTO.UserDTO;
 import com.example.UserService.Models.Session;
 import com.example.UserService.Models.SessionStatus;
 import com.example.UserService.Repository.SessionRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.security.MacAlgorithm;
@@ -46,19 +51,40 @@ public class AuthService {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    @Autowired
+    private KafkaProducerClient kafkaProducerClient;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
     public User signUp(String email,String password)
     {
         Optional<User> userOptional=userRepository.findByEmail(email);
+        User user;
         if(userOptional.isEmpty())
         {
-            User user=new User();
+            user=new User();
             user.setEmail(email);
             //Encrypting our password using bcryptpassword encoder
             user.setPassword(bCryptPasswordEncoder.encode(password));
-            User saveduser=userRepository.save(user);
-            return saveduser;
+            user=userRepository.save(user);
         }
-        return userOptional.get();
+        else {
+           user= userOptional.get();
+        }
+
+        try {
+            System.out.println("Kafka producer is sending message");
+            SendEmailMessageDTO sendEmailMessageDTO=new SendEmailMessageDTO();
+            sendEmailMessageDTO.setTo(email);
+            sendEmailMessageDTO.setFrom("admin@scaler.com");
+            sendEmailMessageDTO.setSubject("Welcome to scaler");
+            sendEmailMessageDTO.setBody("Have a pleasant Stay");
+            kafkaProducerClient.sendMessage("sendEmail", objectMapper.writeValueAsString(sendEmailMessageDTO));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return user;
     }
 
     public Pair<User,MultiValueMap<String,String>> login(String email, String password)

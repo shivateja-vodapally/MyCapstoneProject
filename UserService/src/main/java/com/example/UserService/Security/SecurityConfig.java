@@ -80,9 +80,12 @@ public class SecurityConfig {
             throws Exception {
         //We are allowing http:localhost:9000/users/userId url in this code and remaining
         //all the paths should be authenticated via http://localhost:9000/login
+        //Disable CSRF for REST endpoints i.e. inorder to permit our post requests too skipping login page
         http
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/users/**").permitAll()
+//                        .requestMatchers("/users/**").permitAll()
+                        .requestMatchers("/auth/signup").permitAll()
                         .anyRequest().authenticated()
                 )
                 // Form login handles the redirect to the login page from the
