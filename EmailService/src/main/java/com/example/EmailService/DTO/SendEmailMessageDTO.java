@@ -1,4 +1,4 @@
-package com.example.UserService.DTO;
+package com.example.EmailService.DTO;
 
 import lombok.Getter;
 import lombok.Setter;
